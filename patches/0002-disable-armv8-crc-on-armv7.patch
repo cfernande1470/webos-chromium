@@ -2,12 +2,15 @@ diff --git a/src/third_party/zlib/BUILD.gn b/src/third_party/zlib/BUILD.gn
 index f5b57f360f..6645383359 100644
 --- a/src/third_party/zlib/BUILD.gn
 +++ b/src/third_party/zlib/BUILD.gn
-@@ -343,7 +343,7 @@ component("zlib") {
+@@ -343,8 +343,10 @@ component("zlib") {
  
      if (use_x86_x64_optimizations) {
        deps += [ ":zlib_crc32_simd" ]
 -    } else if (use_arm_neon_optimizations) {
 +    } else if (use_arm_neon_optimizations && current_cpu == "arm64") {
        deps += [ ":zlib_arm_crc32" ]
++    } else if (use_arm_neon_optimizations) {
++      defines += [ "ARMV8_OS_LINUX" ]
      }
    } else {
+     sources += [ "inflate.c" ]
