@@ -1,0 +1,6 @@
+.cache/
+out/
+dist/
+*.ipk
+*.tar.xz
+*.AppImage
