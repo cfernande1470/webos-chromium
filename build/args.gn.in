@@ -38,7 +38,7 @@ cros_target_cxx = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-g++"
 cros_target_ld = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-g++"
 cros_target_nm = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-nm"
 cros_target_readelf = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-readelf"
-cros_target_extra_cppflags = "-march=armv7-a -mfloat-abi=softfp -mfpu=neon-fp16"
+cros_target_extra_cppflags = "-march=armv7-a -mfloat-abi=softfp -mfpu=neon-fp16 -mfp16-format=ieee"
 cros_target_extra_asmflags = "-march=armv7-a -mfloat-abi=softfp -mfpu=neon-fp16"
 target_sysroot = "@TARGET_SYSROOT@"
 
