@@ -16,6 +16,15 @@ diff --git a/src/build/toolchain/cros/BUILD.gn b/src/build/toolchain/cros/BUILD.
 index fcc521038f..711b118893 100644
 --- a/src/build/toolchain/cros/BUILD.gn
 +++ b/src/build/toolchain/cros/BUILD.gn
+@@ -77,6 +77,7 @@ cros_toolchain("target") {
+     if (cros_target_readelf != "") {
+       readelf = cros_target_readelf
+     }
+     extra_cflags = cros_target_extra_cflags
++    extra_asmflags = cros_target_extra_asmflags
+     extra_cppflags = cros_target_extra_cppflags
+     extra_cxxflags = cros_target_extra_cxxflags
+     extra_ldflags = cros_target_extra_ldflags
 @@ -177,6 +177,7 @@ cros_toolchain("host") {
      current_cpu = host_cpu
      current_os = "linux"
@@ -60,6 +69,14 @@ diff --git a/src/build/toolchain/cros_toolchain.gni b/src/build/toolchain/cros_t
 index a2696bd3f4..3f625d6bef 100644
 --- a/src/build/toolchain/cros_toolchain.gni
 +++ b/src/build/toolchain/cros_toolchain.gni
+@@ -45,6 +45,7 @@ declare_args() {
+   # These can be optionally set. The "_cppflags"  will be applied to *both*
+   # C and C++ files; use "_cxxflags" for C++-only flags.
+   cros_target_extra_cflags = ""
++  cros_target_extra_asmflags = ""
+   cros_target_extra_cppflags = ""
+   cros_target_extra_cxxflags = ""
+   cros_target_extra_ldflags = ""
 @@ -60,6 +60,8 @@ declare_args() {
    cros_host_extra_cxxflags = ""
    cros_host_extra_ldflags = ""
