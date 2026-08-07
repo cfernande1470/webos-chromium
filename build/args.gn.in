@@ -49,6 +49,7 @@ use_ozone = true
 ozone_auto_platforms = false
 use_dbus = false
 use_system_libdrm = false
+use_libpci = false
 use_pangocairo = false
 use_cups = false
 use_kerberos = false
