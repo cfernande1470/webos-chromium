@@ -1,0 +1,72 @@
+target_os = "linux"
+target_cpu = "arm"
+arm_arch = "armv7-a"
+arm_version = 7
+arm_float_abi = "softfp"
+arm_use_neon = true
+
+is_webos = true
+is_cross_linux_build = true
+is_clang = false
+is_debug = false
+is_component_build = false
+symbol_level = 0
+blink_symbol_level = 0
+treat_warnings_as_errors = false
+fatal_linker_warnings = false
+use_sysroot = false
+use_gold = false
+use_lld = false
+use_custom_libcxx = false
+use_custom_libcxx_for_host = false
+
+host_toolchain = "//build/toolchain/cros:host"
+v8_snapshot_toolchain = "//build/toolchain/cros:v8_snapshot_host"
+cros_host_ar = "/usr/bin/ar"
+cros_host_cc = "/usr/bin/gcc"
+cros_host_cxx = "/usr/bin/g++"
+cros_host_ld = "/usr/bin/g++"
+cros_host_nm = "/usr/bin/nm"
+cros_host_sysroot = "/"
+host_pkg_config = "@PROJECT_ROOT@/scripts/host-pkg-config"
+cros_host_pkg_config = "@PROJECT_ROOT@/scripts/host-pkg-config"
+cros_host_system_libdir = "@HOST_SYSTEM_LIBDIR@"
+
+cros_target_ar = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-ar"
+cros_target_cc = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-gcc"
+cros_target_cxx = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-g++"
+cros_target_ld = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-g++"
+cros_target_nm = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-nm"
+cros_target_readelf = "@SDK_ROOT@/bin/arm-webos-linux-gnueabi-readelf"
+cros_target_extra_cppflags = "-march=armv7-a -mfloat-abi=softfp -mfpu=neon-fp16"
+target_sysroot = "@TARGET_SYSROOT@"
+
+enable_browser_shell = true
+is_browser_shell_cbe = false
+use_cbe = false
+use_neva_chrome_extensions = true
+use_ozone = true
+ozone_auto_platforms = false
+use_dbus = false
+use_system_libdrm = false
+use_pangocairo = false
+use_cups = false
+use_kerberos = false
+use_pmlog = true
+use_bundled_fontconfig = false
+use_gst_media = false
+use_neva_media = false
+use_webos_codec = false
+use_webos_audio = false
+use_webos_camera = false
+
+enable_nacl = false
+enable_print_preview = false
+enable_remoting = false
+proprietary_codecs = true
+ffmpeg_branding = "Chrome"
+enable_widevine = false
+use_debug_fission = false
+can_use_legacy_luna_role_files = true
+webos_toolprefix = "arm-webos-linux-gnueabi-"
+webos_submission_number = 16

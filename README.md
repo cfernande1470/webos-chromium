@@ -17,17 +17,25 @@ protocol. A stock Linux Chromium binary therefore cannot create a window.
   SAM-managed `wl_shell` surface, Mali-G51 rendering, and an ARM64-to-ARM32
   VirGL bridge on this exact television.
 
-The preferred design is now a stock, current AArch64 Chromium plus a small
-`xdg-shell` to webOS `wl_shell` adapter. This avoids maintaining a Chromium
-fork. The webOS OSE Chromium 120 fork remains the fallback and reference
-implementation. The final Homebrew package will not overwrite LG's system
-browser.
+The selected design is webOS OSE Chromium 120 compiled for the television's
+ARMv7 userspace. It talks directly to LG's Wayland/EGL/GLES stack and Mali-G51;
+there is no VirGL renderer, VM, protocol proxy, or framebuffer copy in the
+graphics path. The fork already contains LG's private Ozone platform and its
+browser shell supports Chromium extensions.
+
+The GN graph currently generates successfully on an ARM64 Raspberry Pi host
+(20,197 targets). The first full browser-shell build and physical-device test
+are in progress. The final Homebrew package will coexist with, and never
+overwrite, LG's system browser.
 
 ## Repository layout
 
 - `docs/feasibility.md`: measured device constraints and design decisions.
 - `scripts/device-audit.sh`: read-only compatibility report for a TV.
 - `scripts/probe-wayland.sh`: reproduces the stock Chromium incompatibility.
+- `scripts/host-pkg-config`: ARM64 host helper for Debian/Ubuntu multiarch.
+- `build/args.gn.in`: reproducible ARMv7 webOS build configuration.
+- `patches/`: minimal changes needed to build LG's source on an ARM64 host.
 - `upstream/`: pinned upstream source metadata.
 
 Large Chromium sources, build output, downloaded runtimes, and IPKs are kept

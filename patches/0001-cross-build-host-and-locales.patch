@@ -1,0 +1,84 @@
+diff --git a/src/build/config/linux/BUILD.gn b/src/build/config/linux/BUILD.gn
+index 88c9197a63..db57cdfbd0 100644
+--- a/src/build/config/linux/BUILD.gn
++++ b/src/build/config/linux/BUILD.gn
+@@ -17,6 +17,9 @@ group("linux") {
+ config("compiler") {
+   if (current_cpu == "arm64") {
+     import("//build/config/arm.gni")
++    if (!defined(arm_control_flow_integrity)) {
++      arm_control_flow_integrity = "none"
++    }
+     cflags = []
+     asmflags = []
+     # Neva: Switching off compiler branch protection feature for ARMv8.0
+diff --git a/src/build/toolchain/cros/BUILD.gn b/src/build/toolchain/cros/BUILD.gn
+index fcc521038f..711b118893 100644
+--- a/src/build/toolchain/cros/BUILD.gn
++++ b/src/build/toolchain/cros/BUILD.gn
+@@ -177,6 +177,7 @@ cros_toolchain("host") {
+     current_cpu = host_cpu
+     current_os = "linux"
+     sysroot = cros_host_sysroot
++    system_libdir = cros_host_system_libdir
+   }
+ 
+   if (!lacros_use_chromium_toolchain) {
+@@ -201,6 +202,31 @@ cros_toolchain("host") {
+   }
+ }
+ 
++# Native host snapshot generator. mksnapshot executes on the build host while
++# emitting data for the ARM target.
++cros_toolchain("v8_snapshot_host") {
++  toolchain_args = {
++    is_clang = false
++    current_cpu = host_cpu
++    v8_current_cpu = v8_target_cpu
++    current_os = "linux"
++    sysroot = cros_host_sysroot
++    system_libdir = cros_host_system_libdir
++    pkg_config = cros_host_pkg_config
++  }
++
++  ar = cros_host_ar
++  cc = cros_host_cc
++  cxx = cros_host_cxx
++  ld = cros_host_ld
++  nm = cros_host_nm
++  extra_cflags = cros_host_extra_cflags
++  extra_cppflags = cros_host_extra_cppflags
++  extra_cxxflags = cros_host_extra_cxxflags
++  extra_ldflags = cros_host_extra_ldflags
++  needs_gomacc_path_arg = false
++}
++
+ cros_toolchain("v8_snapshot") {
+   toolchain_args = {
+     if (target_cpu == "x86" || target_cpu == "arm" || target_cpu == "mipsel") {
+diff --git a/src/build/toolchain/cros_toolchain.gni b/src/build/toolchain/cros_toolchain.gni
+index a2696bd3f4..3f625d6bef 100644
+--- a/src/build/toolchain/cros_toolchain.gni
++++ b/src/build/toolchain/cros_toolchain.gni
+@@ -60,6 +60,8 @@ declare_args() {
+   cros_host_extra_cxxflags = ""
+   cros_host_extra_ldflags = ""
+   cros_host_sysroot = ""
++  cros_host_pkg_config = "pkg-config"
++  cros_host_system_libdir = "lib"
+ 
+   cros_v8_snapshot_ar = "${clang_base_path}/bin/llvm-ar"
+   cros_v8_snapshot_cc = "${clang_base_path}/bin/clang"
+diff --git a/src/neva/app_runtime/BUILD.gn b/src/neva/app_runtime/BUILD.gn
+index 8c686e1723..b40359598d 100644
+--- a/src/neva/app_runtime/BUILD.gn
++++ b/src/neva/app_runtime/BUILD.gn
+@@ -471,7 +471,7 @@ repack_locales("repack_extra") {
+ if (!use_cbe) {
+   repack_locales("locales_repack") {
+     source_patterns = [ "${root_gen_dir}/neva/app_runtime/locales/" ]
+-    deps = [ ":app_runtime_network_error_strings" ]
++    deps = [ ":repack" ]
+ 
+     output_dir = "$root_out_dir/neva_locales"
+     input_locales = app_runtime_locales

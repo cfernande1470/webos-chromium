@@ -1,0 +1,6 @@
+#!/bin/sh
+# Chromium's cross-build helper assumes host pkg-config files live in
+# /usr/lib/pkgconfig. Debian/Ubuntu stores them in a multiarch directory.
+host_multiarch=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+export PKG_CONFIG_LIBDIR="/usr/lib/${host_multiarch}/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig"
+exec /usr/bin/pkg-config "$@"
