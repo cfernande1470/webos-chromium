@@ -26,6 +26,12 @@ else
     | tar -xpf - -C "$OUT/bin"
 fi
 
+# The GN target name is descriptive; the launcher uses the conventional
+# browser-shell name expected by the webOS install script.
+if [ -f "$OUT/bin/browser_shell_webos" ] && [ ! -e "$OUT/bin/browser_shell" ]; then
+  mv "$OUT/bin/browser_shell_webos" "$OUT/bin/browser_shell"
+fi
+
 chmod 755 "$OUT/bin/chromium120" "$OUT/bin/browser_shell"
 chmod 644 "$OUT"/appinfo.json "$OUT"/index.html "$OUT"/icon.png "$OUT"/*.dat "$OUT"/*.pak "$OUT"/*.bin 2>/dev/null || true
 
