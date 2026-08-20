@@ -39,6 +39,8 @@ LG's system browser.
 - `scripts/host-pkg-config`: ARM64 host helper for Debian/Ubuntu multiarch.
 - `build/args.gn.in`: reproducible ARMv7 webOS build configuration.
 - `patches/`: minimal changes needed to build LG's source on an ARM64 host.
+- `package/org.webosbrew.chromium120/`: isolated SAM launcher and browser UI.
+- `scripts/stage-chromium120.sh`: pulls the non-Git ELF payload into `dist/`.
 - `upstream/`: pinned upstream source metadata.
 
 Large Chromium sources, build output, downloaded runtimes, and IPKs are kept

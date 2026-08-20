@@ -1,0 +1,12 @@
+{
+  "id": "org.webosbrew.chromium120",
+  "version": "0.1.0",
+  "vendor": "webosbrew",
+  "type": "native",
+  "main": "bin/chromium120",
+  "title": "Chromium 120",
+  "icon": "icon.png",
+  "noSplashOnLaunch": true,
+  "spinnerOnLaunch": false,
+  "nativeLifeCycleInterfaceVersion": 2
+}

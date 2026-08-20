@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chromium 120</title>
+  <style>
+    :root { color-scheme: dark; font: 22px sans-serif; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #202124; }
+    #toolbar { height: 76px; display: flex; gap: 10px; align-items: center; padding: 10px 14px; }
+    #url { flex: 1; min-width: 0; height: 54px; border: 0; border-radius: 8px; padding: 0 18px; color: #202124; background: #fff; font: inherit; }
+    button { height: 54px; min-width: 54px; border: 0; border-radius: 8px; color: #fff; background: #3c4043; font: inherit; }
+    button:focus, #url:focus { outline: 3px solid #8ab4f8; outline-offset: 2px; }
+    #status { position: absolute; left: 16px; bottom: 8px; z-index: 3; color: #bdc1c6; font-size: 16px; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="back" aria-label="Back">‹</button>
+    <button id="forward" aria-label="Forward">›</button>
+    <button id="reload" aria-label="Reload">↻</button>
+    <input id="url" type="url" inputmode="url" spellcheck="false" value="https://www.google.com/">
+    <button id="go" aria-label="Go">Go</button>
+  </div>
+  <div id="status">Starting Chromium…</div>
+  <script>
+    (() => {
+      const toolbar = document.getElementById('toolbar');
+      const url = document.getElementById('url');
+      const status = document.getElementById('status');
+      const mainView = shell.shellWindow.pageView;
+      const view = new PageView({
+        'page-contents-params': { 'error-page-hiding': false }
+      });
+      mainView.addChildView(view);
+
+      const sizeView = () => {
+        view.setBounds(0, toolbar.offsetHeight, window.innerWidth,
+                       Math.max(1, window.innerHeight - toolbar.offsetHeight));
+      };
+      const normalise = value => {
+        value = value.trim();
+        if (!value) return 'about:blank';
+        if (/^[a-z][a-z0-9+.-]*:/i.test(value)) return value;
+        if (/^[^ ]+\.[^ ]+/.test(value)) return 'https://' + value;
+        return 'https://www.google.com/search?q=' + encodeURIComponent(value);
+      };
+      const navigate = value => {
+        const target = normalise(value);
+        url.value = target;
+        status.textContent = 'Loading…';
+        view.pageContents.loadURL(target);
+      };
+
+      view.pageContents.on('dom-ready', () => {
+        status.textContent = '';
+        url.value = view.pageContents.url || url.value;
+      });
+      view.pageContents.on('did-finish-load', () => {
+        status.textContent = '';
+        url.value = view.pageContents.url || url.value;
+      });
+      view.pageContents.on('did-fail-load', event => {
+        status.textContent = 'Load failed: ' + (event && event.errorDescription || 'unknown error');
+      });
+
+      document.getElementById('go').onclick = () => navigate(url.value);
+      document.getElementById('reload').onclick = () => view.pageContents.reload();
+      document.getElementById('back').onclick = () => view.pageContents.goBack();
+      document.getElementById('forward').onclick = () => view.pageContents.goForward();
+      url.onkeydown = event => { if (event.key === 'Enter') navigate(url.value); };
+      window.addEventListener('resize', sizeView);
+      sizeView();
+      navigate(url.value);
+    })();
+  </script>
+</body>
+</html>
