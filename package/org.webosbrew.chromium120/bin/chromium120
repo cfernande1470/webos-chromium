@@ -12,7 +12,14 @@ export APP_ID
 export BROWSER_APP_ID=$APP_ID
 export LD_LIBRARY_PATH="$APP_DIR/bin${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-CACHE_ROOT=${XDG_CACHE_HOME:-${HOME:-/tmp}/.cache}
+# SAM exposes the application directory as HOME inside its jail.  That tree
+# is not writable by the runtime uid, so keep Chromium's mutable profile in
+# the writable tmpfs instead.
+# webOS may export XDG_CACHE_HOME to the read-only application tree.  Keep
+# the mutable browser profile on tmpfs regardless of the inherited HOME/XDG
+# values.
+CACHE_ROOT=/tmp/.cache
+export XDG_CACHE_HOME="$CACHE_ROOT"
 DATA_DIR="$CACHE_ROOT/chromium120"
 mkdir -p "$XDG_RUNTIME_DIR" "$DATA_DIR" "$APP_DIR/extensions"
 
@@ -37,7 +44,7 @@ exec "$APP_DIR/bin/browser_shell" \
   --shell-app-path="file://$APP_DIR/index.html" \
   --shell-fullscreen=true \
   --shell-web-apis=v8/browser_shell,v8/browser_shell_ipc \
-  --ozone-platform=wayland \
+  --ozone-platform=wayland_external \
   --allow-load-extensions-in=persist:webcontent,private \
   --load-extension="$APP_DIR/extensions" \
   "$@" >>"/tmp/$APP_ID.log" 2>&1
