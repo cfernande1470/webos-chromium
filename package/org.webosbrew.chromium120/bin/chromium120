@@ -3,6 +3,7 @@ set -eu
 
 APP_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 APP_ID=org.webosbrew.chromium120
+DESKTOP_USER_AGENT='Mozilla/5.0 (X11; Linux armv7l) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.269 Safari/537.36'
 
 export TMPDIR=/tmp
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/xdg}
@@ -38,11 +39,13 @@ exec "$APP_DIR/bin/browser_shell" \
   --disable-translate \
   --enable-accelerated-compositing \
   --enable-smooth-scrolling \
+  --enable-neva-ime \
   --enable-wayland-ime \
   --start-maximized \
   --user-data-dir="$DATA_DIR" \
   --shell-app-id="$APP_ID" \
   --shell-app-path="file://$APP_DIR/index.html" \
+  --user-agent="$DESKTOP_USER_AGENT" \
   --shell-fullscreen=true \
   --shell-web-apis=v8/browser_shell,v8/browser_shell_ipc \
   --ozone-platform=wayland_external \

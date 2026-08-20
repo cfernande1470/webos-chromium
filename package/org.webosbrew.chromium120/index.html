@@ -8,20 +8,35 @@
     :root { color-scheme: dark; font: 22px sans-serif; }
     * { box-sizing: border-box; }
     html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #202124; }
-    #toolbar { height: 76px; display: flex; gap: 10px; align-items: center; padding: 10px 14px; }
+    #toolbar { height: 76px; display: flex; gap: 10px; align-items: center; padding: 10px 14px; position: relative; z-index: 5; }
     #url { flex: 1; min-width: 0; height: 54px; border: 0; border-radius: 8px; padding: 0 18px; color: #202124; background: #fff; font: inherit; }
-    button { height: 54px; min-width: 54px; border: 0; border-radius: 8px; color: #fff; background: #3c4043; font: inherit; }
+    button { height: 54px; min-width: 54px; border: 0; border-radius: 8px; color: #fff; background: #3c4043; font: inherit; padding: 0 14px; }
+    button.action { min-width: 118px; }
+    #menu-panel { width: 360px; margin: 0 14px 10px auto; padding: 14px; border-radius: 10px; background: #303134; box-shadow: 0 8px 30px rgba(0,0,0,.45); }
+    #menu-panel[hidden] { display: none; }
+    #menu-panel h2 { margin: 0 0 12px; font-size: 24px; }
+    #menu-panel button { display: block; width: 100%; margin: 8px 0; text-align: left; }
+    #menu-panel .hint { color: #bdc1c6; font-size: 16px; line-height: 1.35; margin: 10px 2px 4px; }
     button:focus, #url:focus { outline: 3px solid #8ab4f8; outline-offset: 2px; }
     #status { position: absolute; left: 16px; bottom: 8px; z-index: 3; color: #bdc1c6; font-size: 16px; pointer-events: none; }
   </style>
 </head>
 <body>
   <div id="toolbar">
-    <button id="back" aria-label="Back">‹</button>
-    <button id="forward" aria-label="Forward">›</button>
-    <button id="reload" aria-label="Reload">↻</button>
+    <button id="back" class="action" aria-label="Atrás">Atrás</button>
+    <button id="forward" class="action" aria-label="Adelante">Adelante</button>
+    <button id="reload" class="action" aria-label="Recargar">Recargar</button>
     <input id="url" type="url" inputmode="url" spellcheck="false" value="https://www.google.com/">
-    <button id="go" aria-label="Go">Go</button>
+    <button id="go" class="action" aria-label="Ir">Ir</button>
+    <button id="menu" class="action" aria-label="Opciones">Opciones</button>
+  </div>
+  <div id="menu-panel" hidden>
+    <h2>Opciones de Chromium</h2>
+    <button id="new-page">Nueva página</button>
+    <button id="extensions">Extensiones</button>
+    <button id="clear-data">Borrar datos de navegación</button>
+    <button id="close-menu">Cerrar</button>
+    <div class="hint">El teclado webOS aparece al seleccionar un campo de texto. Las extensiones se cargan desde la carpeta de extensiones de la aplicación.</div>
   </div>
   <div id="status">Starting Chromium…</div>
   <script>
@@ -29,6 +44,7 @@
       const toolbar = document.getElementById('toolbar');
       const url = document.getElementById('url');
       const status = document.getElementById('status');
+      const menuPanel = document.getElementById('menu-panel');
       const mainView = shell.shellWindow.pageView;
       const view = new PageView({
         'page-contents-params': { 'error-page-hiding': false }
@@ -36,8 +52,10 @@
       mainView.addChildView(view);
 
       const sizeView = () => {
-        view.setBounds(0, toolbar.offsetHeight, window.innerWidth,
-                       Math.max(1, window.innerHeight - toolbar.offsetHeight));
+        const chromeHeight = toolbar.offsetHeight +
+            (menuPanel.hidden ? 0 : menuPanel.offsetHeight);
+        view.setBounds(0, chromeHeight, window.innerWidth,
+                       Math.max(1, window.innerHeight - chromeHeight));
       };
       const normalise = value => {
         value = value.trim();
@@ -69,6 +87,33 @@
       document.getElementById('reload').onclick = () => view.pageContents.reload();
       document.getElementById('back').onclick = () => view.pageContents.goBack();
       document.getElementById('forward').onclick = () => view.pageContents.goForward();
+      document.getElementById('menu').onclick = () => {
+        menuPanel.hidden = !menuPanel.hidden;
+        sizeView();
+        if (!menuPanel.hidden) document.getElementById('close-menu').focus();
+      };
+      document.getElementById('close-menu').onclick = () => {
+        menuPanel.hidden = true;
+        sizeView();
+      };
+      document.getElementById('new-page').onclick = () => {
+        menuPanel.hidden = true;
+        sizeView();
+        url.value = 'https://www.google.com/';
+        navigate(url.value);
+      };
+      document.getElementById('extensions').onclick = () => {
+        menuPanel.hidden = true;
+        sizeView();
+        navigate('chrome://extensions/');
+      };
+      document.getElementById('clear-data').onclick = () => {
+        menuPanel.hidden = true;
+        sizeView();
+        status.textContent = 'Borrando datos…';
+        view.pageContents.clearData();
+        status.textContent = 'Datos borrados';
+      };
       url.onkeydown = event => { if (event.key === 'Enter') navigate(url.value); };
       window.addEventListener('resize', sizeView);
       sizeView();
