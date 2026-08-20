@@ -20,7 +20,6 @@ echo '===== UPLOAD AND INSTALL ====='
 tar -C "$OUT" -cf - . | ssh "$TV" "
   set -e
   luna-send -n 1 -f luna://com.webos.applicationManager/closeByAppId '{\"id\":\"$APP_ID\"}' >/dev/null 2>&1 || true
-  pkill -f '$APP_ID/bin/browser_shell' 2>/dev/null || true
   rm -rf '$TMP'
   mkdir -p '$TMP'
   tar -xf - -C '$TMP'

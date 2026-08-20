@@ -10,11 +10,15 @@ export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-wayland-0}
 export DISPLAY_ID=${DISPLAY_ID:-0}
 export APP_ID
 export BROWSER_APP_ID=$APP_ID
-export LD_LIBRARY_PATH="$APP_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$APP_DIR/bin${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 CACHE_ROOT=${XDG_CACHE_HOME:-${HOME:-/tmp}/.cache}
 DATA_DIR="$CACHE_ROOT/chromium120"
 mkdir -p "$XDG_RUNTIME_DIR" "$DATA_DIR" "$APP_DIR/extensions"
+
+# libcbe exports the webOS BrowserBase data symbols consumed by the shell.
+# Preload it only for Chromium, not for the setup commands above.
+export LD_PRELOAD="$APP_DIR/bin/libcbe.so${LD_PRELOAD:+:$LD_PRELOAD}"
 
 exec "$APP_DIR/bin/browser_shell" \
   --no-sandbox \
