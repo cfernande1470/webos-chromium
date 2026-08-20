@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${WEBOS_CHROMIUM_SRC:?WEBOS_CHROMIUM_SRC must point at the Chromium source}"
+: "${WEBOS_I386_SYSROOT:?WEBOS_I386_SYSROOT must point at the 32-bit host sysroot}"
+: "${WEBOS_I386_GCCLIB:?WEBOS_I386_GCCLIB must point at the 32-bit GCC support files}"
+
+case "$(basename "$0")" in
+  clang++*) compiler=clang++ ;;
+  *) compiler=clang ;;
+esac
+
+args=("$@")
+is_32=0
+for arg in "${args[@]}"; do
+  [[ "$arg" == "-m32" ]] && is_32=1
+done
+
+if ((is_32)); then
+  args+=(
+    "--sysroot=$WEBOS_I386_SYSROOT"
+    "-B$WEBOS_I386_GCCLIB"
+    "-fuse-ld=lld"
+    "-Wl,--dynamic-linker=$WEBOS_I386_SYSROOT/lib32/ld-linux.so.2"
+    "-Wl,-rpath,$WEBOS_I386_SYSROOT/lib32"
+    "-Wl,-rpath,$WEBOS_I386_SYSROOT/usr/lib32"
+  )
+fi
+
+exec "$WEBOS_CHROMIUM_SRC/third_party/llvm-build/Release+Asserts/bin/$compiler" "${args[@]}"

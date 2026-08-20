@@ -1,0 +1,49 @@
+diff --git a/net/cert/internal/system_trust_store.cc b/net/cert/internal/system_trust_store.cc
+index 9b4af0c..9b4af0c 100644
+--- a/net/cert/internal/system_trust_store.cc
++++ b/net/cert/internal/system_trust_store.cc
+@@ -307,5 +307,16 @@ void InitializeTrustStoreAndroid() {}
+ 
+ #endif  // CHROME_ROOT_STORE_SUPPORTED
+ 
+ #endif
+ 
++// WEBOS_CHROMIUM_LINUX_TRUST_STORE: webOS does not ship the NSS development
++// integration used by Chromium's normal Linux build. Keep the Chrome Root
++// Store active and use an empty system store for this port.
++#if BUILDFLAG(IS_LINUX)
++std::unique_ptr<SystemTrustStore> CreateSslSystemTrustStoreChromeRoot(
++    std::unique_ptr<TrustStoreChrome> chrome_root) {
++  return std::make_unique<SystemTrustStoreChrome>(
++      std::move(chrome_root), std::make_unique<TrustStoreCollection>());
++}
++#endif
++
+ std::unique_ptr<SystemTrustStore> CreateEmptySystemTrustStore() {
+   return std::make_unique<DummySystemTrustStore>();
+ }
+diff --git a/net/BUILD.gn b/net/BUILD.gn
+index 9b4af0c..9b4af0c 100644
+--- a/net/BUILD.gn
++++ b/net/BUILD.gn
+@@ -1226,6 +1226,11 @@ component("net") {
+     ]
+   }
+ 
++  if (is_linux && !use_nss_certs) {
++    # Linux without NSS still needs the platform-independent test-root hooks.
++    sources += [ "cert/test_root_certs_builtin.cc" ]
++  }
++
+   if (is_linux || is_chromeos || is_android) {
+     sources += [
+       "base/address_map_linux.cc",
+diff --git a/webos/BUILD.gn b/webos/BUILD.gn
+index 9b4af0c..9b4af0c 100644
+--- a/webos/BUILD.gn
++++ b/webos/BUILD.gn
+@@ -87,3 +87,4 @@ source_set("webos_impl") {
+     "//third_party/blink/public:blink",
+     "//ui/gl",
++    "//neva/browser_shell/service:shell_service",
+   ]

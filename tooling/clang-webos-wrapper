@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${WEBOS_CHROMIUM_SRC:?WEBOS_CHROMIUM_SRC must point at the Chromium source}"
+wrapper_name=$(basename "$0")
+case "$wrapper_name" in
+  clang++*) compiler=clang++ ;;
+  *) compiler=clang ;;
+esac
+is_arm=1
+[[ "$wrapper_name" == *-host-* ]] && is_arm=0
+
+args=()
+is_c_source=0
+is_asm_source=0
+is_tls_source=0
+for arg in "$@"; do
+  # GCC accepts this ARM FP16 spelling; Chromium's Clang already uses the
+  # IEEE representation and rejects the option as an unknown driver flag.
+  [[ "$arg" == "-mfp16-format=ieee" ]] && continue
+  # The Rocky node has no gcc-c++/libatomic-devel; host Chromium tools use
+  # compiler builtins for the atomics they need.
+  [[ "$is_arm" == 0 && "$arg" == "-latomic" ]] && continue
+  [[ "$arg" == *.c || "$arg" == "-std=gnu11" ]] && is_c_source=1
+  [[ "$arg" == *.S || "$arg" == *.s ]] && is_asm_source=1
+  [[ "$arg" == *thread_state_storage.cc ]] && is_tls_source=1
+  args+=("$arg")
+done
+
+# BoringSSL's C sources use the C11 spelling `static_assert`; the old webOS
+# glibc headers expose only `_Static_assert` to Clang's C frontend.
+if ((is_c_source)); then
+  args+=("-Dstatic_assert=_Static_assert")
+fi
+if ((is_asm_source && is_arm)); then
+  # gcc_toolchain does not forward cros_target_extra_asmflags in this
+  # webOS branch, so tell Clang's integrated assembler explicitly which ISA
+  # the ARM assembly sources use.
+  args+=("--target=arm-linux-gnueabi" "-march=armv7-a" "-mfloat-abi=softfp" "-mfpu=neon")
+fi
+# Clang otherwise selects the ARM local-exec TLS model for this PIC object.
+# It is later linked into libcbe.so, where local-exec relocations are invalid.
+if ((is_tls_source && is_arm)); then
+  args+=("-ftls-model=global-dynamic")
+fi
+
+exec "$WEBOS_CHROMIUM_SRC/third_party/llvm-build/Release+Asserts/bin/$compiler" "${args[@]}"

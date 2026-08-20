@@ -24,9 +24,12 @@ graphics path. The fork already contains LG's private Ozone platform and its
 browser shell supports Chromium extensions.
 
 The GN graph currently generates successfully on an ARM64 Raspberry Pi host
-(20,197 targets). The first full browser-shell build and physical-device test
-are in progress. The final Homebrew package will coexist with, and never
-overwrite, LG's system browser.
+(20,197 targets). Chromium 120 has now been fully linked for the TV's ARMv7
+userspace: `browser_shell_webos` and `libcbe.so` are ELF32 ARM/EABI5 binaries,
+with Chromium's extensions code enabled. The build artifact is kept on the
+FMI cluster while the isolated SAM package and physical-device test are
+prepared. The final Homebrew package will coexist with, and never overwrite,
+LG's system browser.
 
 ## Repository layout
 

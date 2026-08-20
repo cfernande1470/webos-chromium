@@ -59,13 +59,13 @@ upgrade path after the direct port is working.
 
 ## Remaining gates
 
-1. Compile and link `browser_shell_webos` against the copied webOS 6 SDK sysroot.
-2. Deploy it as an isolated SAM-managed application and validate direct EGL.
-3. Implement remote-control key mapping, virtual keyboard, audio, downloads,
+1. Deploy the linked ARMv7 binary as an isolated SAM-managed application and
+   validate direct EGL.
+2. Implement remote-control key mapping, virtual keyboard, audio, downloads,
    and lifecycle handling.
-4. Verify unpacked extension installation and persistence. Chrome Web Store
+3. Verify unpacked extension installation and persistence. Chrome Web Store
    installation may require Google service integration not present in Chromium;
    local CRX/unpacked installation remains the required acceptance criterion.
-5. Measure memory pressure and video performance on the physical TV.
-6. Package without modifying the built-in browser and publish reproducible
+4. Measure memory pressure and video performance on the physical TV.
+5. Package without modifying the built-in browser and publish reproducible
    release manifests for webOS Homebrew.
