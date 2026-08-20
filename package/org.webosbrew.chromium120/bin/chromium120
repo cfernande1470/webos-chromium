@@ -12,7 +12,9 @@ export APP_ID
 export BROWSER_APP_ID=$APP_ID
 export LD_LIBRARY_PATH="$APP_DIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-mkdir -p "$XDG_RUNTIME_DIR" "$HOME/.cache/chromium120" "$APP_DIR/extensions"
+CACHE_ROOT=${XDG_CACHE_HOME:-${HOME:-/tmp}/.cache}
+DATA_DIR="$CACHE_ROOT/chromium120"
+mkdir -p "$XDG_RUNTIME_DIR" "$DATA_DIR" "$APP_DIR/extensions"
 
 exec "$APP_DIR/bin/browser_shell" \
   --no-sandbox \
@@ -26,7 +28,7 @@ exec "$APP_DIR/bin/browser_shell" \
   --enable-accelerated-compositing \
   --enable-smooth-scrolling \
   --start-maximized \
-  --user-data-dir="$HOME/.cache/chromium120" \
+  --user-data-dir="$DATA_DIR" \
   --shell-app-id="$APP_ID" \
   --shell-app-path="file://$APP_DIR/index.html" \
   --shell-fullscreen=true \
