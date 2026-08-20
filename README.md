@@ -42,6 +42,7 @@ LG's system browser.
 - `patches/`: minimal changes needed to build LG's source on an ARM64 host.
 - `package/org.webosbrew.chromium120/`: isolated SAM launcher and browser UI.
 - `scripts/stage-chromium120.sh`: pulls the non-Git ELF payload into `dist/`.
+- `scripts/install-tv.sh` and `scripts/launch-tv.sh`: direct-device test cycle.
 - `upstream/`: pinned upstream source metadata.
 
 Large Chromium sources, build output, downloaded runtimes, and IPKs are kept

@@ -36,4 +36,4 @@ exec "$APP_DIR/bin/browser_shell" \
   --ozone-platform=wayland \
   --allow-load-extensions-in=persist:webcontent,private \
   --load-extension="$APP_DIR/extensions" \
-  "$@"
+  "$@" >>"/tmp/$APP_ID.log" 2>&1
