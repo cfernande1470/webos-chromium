@@ -33,8 +33,8 @@ printf '%s\n' \
   'webOS-Packager-Version: webos-chromium' \
   > "$TMP/control/control"
 
-(cd "$TMP" && tar -czf control.tar.gz -C control control)
-(cd "$TMP/data" && tar -czf "$TMP/data.tar.gz" .)
+(cd "$TMP" && tar --owner=0 --group=0 --numeric-owner -czf control.tar.gz -C control control)
+(cd "$TMP/data" && tar --owner=0 --group=0 --numeric-owner -czf "$TMP/data.tar.gz" .)
 printf '2.0\n' > "$TMP/debian-binary"
 
 mkdir -p "$OUT_DIR"
