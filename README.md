@@ -34,6 +34,7 @@ LG's system browser.
 ## Repository layout
 
 - `docs/feasibility.md`: measured device constraints and design decisions.
+- `docs/build-result.md`: successful ARMv7 browser-shell link and checksums.
 - `scripts/device-audit.sh`: read-only compatibility report for a TV.
 - `scripts/probe-wayland.sh`: reproduces the stock Chromium incompatibility.
 - `scripts/host-pkg-config`: ARM64 host helper for Debian/Ubuntu multiarch.
