@@ -33,6 +33,7 @@
   <div id="menu-panel" hidden>
     <h2>Opciones de Chromium</h2>
     <button id="new-page">Nueva página</button>
+    <button id="settings">Configuración de Chromium</button>
     <button id="extensions">Extensiones</button>
     <button id="clear-data">Borrar datos de navegación</button>
     <button id="close-menu">Cerrar</button>
@@ -101,6 +102,11 @@
         sizeView();
         url.value = 'https://www.google.com/';
         navigate(url.value);
+      };
+      document.getElementById('settings').onclick = () => {
+        menuPanel.hidden = true;
+        sizeView();
+        navigate('chrome://settings/');
       };
       document.getElementById('extensions').onclick = () => {
         menuPanel.hidden = true;
