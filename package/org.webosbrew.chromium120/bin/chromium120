@@ -38,6 +38,7 @@ exec "$APP_DIR/bin/browser_shell" \
   --disable-translate \
   --enable-accelerated-compositing \
   --enable-smooth-scrolling \
+  --enable-wayland-ime \
   --start-maximized \
   --user-data-dir="$DATA_DIR" \
   --shell-app-id="$APP_ID" \
