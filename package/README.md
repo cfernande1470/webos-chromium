@@ -12,4 +12,9 @@ The resulting `dist/org.webosbrew.chromium120` directory contains the
 launcher, the browser-shell executable, `libcbe.so`, Chromium data files, and
 the small browser UI. The launcher sets the webOS Wayland environment and
 keeps the user data below `$HOME/.cache/chromium120`; it never replaces the
-system browser.
+system browser. Once the app has been tested on the TV, create an installable
+IPK and its Homebrew manifest with:
+
+```bash
+./scripts/build-ipk.sh
+```
